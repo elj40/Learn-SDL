@@ -8,7 +8,9 @@ Learn SDL by making some simple examples from scratch
 ```C
 int main(int argc, char * argv[]) {...
 ```
+* When using a library like SDL_ttf, its kind of easier to copy paste the header file into the same dir as SDL2.h. There probably is some magic with flags, still not sure what standard practice is for this stuff on windows
 
 
 # References
 * [SDL2 for MinGW zip download](https://github.com/libsdl-org/SDL/releases/download/release-2.30.9/SDL2-devel-2.30.9-mingw.zip)
+* [Opening a window tutorial](https://dev.to/noah11012/using-sdl2-opening-a-window-79c)
