@@ -11,8 +11,8 @@
 #include <SDL2/SDL_ttf.h>
 
 #define FACTOR 40
-#define WINDOW_WIDTH 16*FACTOR
-#define WINDOW_HEIGHT 9*FACTOR
+int windowWidth = 16*FACTOR;
+int windowHeight = 9*FACTOR;
 
 #define FONT_PATH "C:\\Windows\\Fonts\\Candaral.ttf"
 
@@ -65,7 +65,7 @@ int main(int argc, char * argv[]) {
 
 	TTF_Font * pFontCanderall = TTF_OpenFont(FONT_PATH, 36);
 
-	SDL_Window * pWindow = SDL_CreateWindow("Moving button", 50, 50, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE);
+	SDL_Window * pWindow = SDL_CreateWindow("Moving button", 50, 50, windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
 	SDL_Renderer * pRenderer = SDL_CreateRenderer(pWindow, -1, SDL_RENDERER_ACCELERATED);
 
 	SDL_FRect button = {0.0, 0.0, 80.0, 40.0};
@@ -93,6 +93,9 @@ int main(int argc, char * argv[]) {
 				int key = event.key.keysym.sym;
 				if (key == SDLK_RETURN) closeWindow = 1;
 				} break;
+			case SDL_WINDOWEVENT:
+				SDL_GetWindowSize(pWindow, &windowWidth, &windowHeight);
+				break;
 			default:
 				break;
 			}
@@ -101,8 +104,8 @@ int main(int argc, char * argv[]) {
 		button.x += velX;
 		button.y += velY;
 
-		if (button.x + button.w >= WINDOW_WIDTH || button.x <= 0) velX *= -1;
-		if (button.y + button.h >= WINDOW_HEIGHT || button.y <= 0) velY *= -1;
+		if (button.x + button.w >= windowWidth || button.x <= 0) velX *= -1;
+		if (button.y + button.h >= windowHeight || button.y <= 0) velY *= -1;
 
 		SDL_SetRenderDrawColor(pRenderer, 10, 10, 10, 255);
 		SDL_RenderClear(pRenderer);
