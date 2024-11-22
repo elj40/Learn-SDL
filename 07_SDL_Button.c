@@ -7,6 +7,7 @@
 */
 
 #include <stdio.h>
+#include <stdint.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
@@ -17,6 +18,7 @@ int windowHeight = 9*FACTOR;
 #define FONT_PATH "C:\\Windows\\Fonts\\Candaral.ttf"
 
 #define BUTTON_SPEED 0.1
+#define FPS 60;
 
 int closeWindow = 0;
 
@@ -73,8 +75,15 @@ int main(int argc, char * argv[]) {
 	float velY = BUTTON_SPEED;
 
 	SDL_Event event;
+
+	Uint64 startTime = 0, endTime = 0;
+	char fpsText[5];
+	float fps;
+	float elapsedTime = SDL_GetTicks();
+	int targetFrameTimeMs = 1000/60;
 	while (!closeWindow)
 	{
+		startTime = SDL_GetPerformanceCounter();
 		while (SDL_PollEvent(&event)) 
 		{
 			switch(event.type) {
@@ -115,8 +124,32 @@ int main(int argc, char * argv[]) {
 				printf("Button clicked\n");
 				closeWindow = 1;
 			}
+			sprintf(fpsText, "%.1f", fps);
+
+			SDL_Surface * pFpsSurface = TTF_RenderText_Solid(pFontCanderall, fpsText, (SDL_Color) {255, 255, 255, 255} );
+			SDL_Texture * pFpsTexture = SDL_CreateTextureFromSurface(pRenderer, pFpsSurface);
+			SDL_Rect fpsRect = {windowWidth - 100, 50, pFpsSurface->w, pFpsSurface->h};
+
+			SDL_RenderCopy(pRenderer, pFpsTexture, NULL, &fpsRect);
+
+			SDL_FreeSurface(pFpsSurface);
+			SDL_DestroyTexture(pFpsTexture);
 		}
 		SDL_RenderPresent(pRenderer);
+
+		// wait until we reach target frame rate
+		// IF we are over or equal to target frame time THEN continue
+		// ELSE wait for the rest of the time (target frame time - time spent)
+		int diffFromTargetMs = targetFrameTimeMs - elapsedTime;
+		if (diffFromTargetMs > 0) {
+			SDL_Delay(diffFromTargetMs);
+		}
+
+		endTime = SDL_GetPerformanceCounter();
+
+		elapsedTime = (endTime - startTime) / (float)SDL_GetPerformanceFrequency();
+
+		fps = 1.0f / elapsedTime;
 	}
 
 	SDL_DestroyWindow(pWindow);
